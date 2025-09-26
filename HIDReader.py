@@ -26,19 +26,21 @@ print("Opened custom HID:", custom_hid_info['product_string'])
 
 mouse_cube = Entity(model='sphere', color=color.red, scale=3, collider='box')
 
-my_position = Vec3(0,0,0)
+cursor_position = Vec3(0,0,0)
+
 def update():
     report = device.read(17)  # 16 bytes + 1 byte for report ID if needed
     report_id, x, y, z, buttons, fx, fy, fz = struct.unpack('<BbbbBfff', bytes(report))
-    print(x)
-    my_position[0] += x / 10
-    my_position[1] += z / 10
-    my_position[2] += y / 10
-    # print(report)
+    print(report)
     # print(my_position)
     # print(fx, fy, fz)
+
+    cursor_position[0] += x / 10
+    cursor_position[1] += z / 10
+    cursor_position[2] += y / 10
+
     cube = Entity(model='cube', color=color.azure, scale=1.5, collider='box')
-    cube.position = my_position
+    cube.position = cursor_position
     cube.rotation = (
         random.uniform(0, 360),  # x rotation
         random.uniform(0, 360),  # y rotation
@@ -49,42 +51,14 @@ def update():
         random.uniform(0, 360),  # y rotation
         random.uniform(0, 360)  # z rotation
     )
-    mouse_cube.position = my_position
+    mouse_cube.position = cursor_position
     return report
 
 
 app = Ursina()
 DirectionalLight().look_at(Vec3(1, -1, 0.5))  # adds shading
-position = (0, 0, 0)
-
-
-# def spin():
-#     cube.animate('rotation_y', cube.rotation_y+360, duration=2, curve=curve.in_out_expo)
-
-# cube.on_click = spin
 EditorCamera()  # add camera controls for orbiting and moving the camera
 # camera.position =(0,0,-1000)
 app.run()
 
-# try:
-#     # Open the HID device
-#     device = hid.device()
-#     device.open(VID, PID)
-#     print(f"Connected to HID device VID={VID:04x} PID={PID:04x}")
-#
-#     # Optional: set non-blocking mode
-#     device.set_nonblocking(True)
-#
-#     print("Dumping HID reports (press Ctrl+C to stop):")
-#     while True:
-#         try:
-#             report = device.read(64)
-#             if report:
-#                 print("Report:", report)
-#         except KeyboardInterrupt:
-#             print("\nStopping...")
-#             break
-#
-# except IOError as e:
-#     print(f"Failed to open HID device: {e}")
-#
+
