@@ -22,10 +22,10 @@ custom_hid_info = next(d for d in devices if d['usage_page'] == CUSTOM_USAGE_PAG
 # Open using path
 device = hid.device()
 device.open_path(custom_hid_info['path'])
+device.set_nonblocking(True)
 print("Opened custom HID:", custom_hid_info['product_string'])
 
 mouse_cube = Entity(model='sphere', color=color.red, scale=3, collider='box')
-
 cursor_position = Vec3(0,0,0)
 
 def update():
